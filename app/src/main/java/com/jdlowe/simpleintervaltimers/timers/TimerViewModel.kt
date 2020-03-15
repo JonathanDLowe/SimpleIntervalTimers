@@ -11,25 +11,27 @@ import androidx.lifecycle.ViewModel
 
 class TimerViewModel: ViewModel() {
     companion object {
+        val TAG = "TimerViewModel"
         val ONE_SECOND = 1000L
         val DONE = 0L
     }
 
-    private var timerOneTimeout = 10000L
+    private var timerOneTimeout = 10000L //TODO
     private var timerTwoTimeout = 10000L
+    lateinit var timerOne: CountDownTimer
+    lateinit var timerTwo: CountDownTimer
 
-
-    private val _timerOneSeconds = MutableLiveData(timerOneTimeout)
-    val timerOneSeconds: LiveData<Long>
-            get() = _timerOneSeconds
-    val timerOneSecondsString = Transformations.map(timerOneSeconds) { time ->
-        DateUtils.formatElapsedTime(time)
+    private val _timerOneMilliseconds = MutableLiveData(timerOneTimeout)
+    val timerOneMilliseconds: LiveData<Long>
+        get() = _timerOneMilliseconds
+    val timerOneSecondsString = Transformations.map(timerOneMilliseconds) { time ->
+        DateUtils.formatElapsedTime(time / ONE_SECOND)
     }
-    private var _timerTwoSeconds = MutableLiveData(timerTwoTimeout)
-    val timerTwoSeconds: LiveData<Long>
-        get() = _timerTwoSeconds
-    val timerTwoSecondsString = Transformations.map(timerTwoSeconds) { time ->
-        DateUtils.formatElapsedTime(time)
+    private var _timerTwoMilliseconds = MutableLiveData(timerTwoTimeout)
+    val timerTwoMilliseconds: LiveData<Long>
+        get() = _timerTwoMilliseconds
+    val timerTwoSecondsString = Transformations.map(timerTwoMilliseconds) { time ->
+        DateUtils.formatElapsedTime(time / ONE_SECOND)
     }
     private val _timerRunning = MutableLiveData<Boolean>(false)
     val timersRunning: LiveData<Boolean>
@@ -46,56 +48,55 @@ class TimerViewModel: ViewModel() {
     }
 
     init {
-        setTimerOne(10000)
-        setTimerTwo(10000)
+        setTimerOne(timerOneTimeout)
+        setTimerTwo(timerTwoTimeout)
     }
 
-    lateinit var timerOne: CountDownTimer
-    lateinit var timerTwo: CountDownTimer
-
-     fun setTimerOne(millisInFuture: Long) {
-         Log.i("TimerViewModl", "setTimerOne()")
+    fun setTimerOne(millisInFuture: Long) {
+        Log.i("TimerViewModl", "setTimerOne()")
+        timerOneTimeout = millisInFuture;
+        _timerOneMilliseconds.value = millisInFuture
         timerOne = object : CountDownTimer(millisInFuture,
             ONE_SECOND
         ) {
             override fun onFinish() {
-            _timerOneSeconds.value = DONE
+                _timerOneMilliseconds.value = DONE
                 onTimerOneFinished()
-                setTimerTwo(timerTwoTimeout)
-                timerTwo.start()
             }
 
             override fun onTick(millisUntilFinished: Long) {
                 Log.i("TimerOne", "onTick")
-                _timerOneSeconds.value = (millisUntilFinished / ONE_SECOND)
+                _timerOneMilliseconds.value = millisUntilFinished
             }
-
         }
     }
-     fun setTimerTwo(millisInFuture: Long) {
-         Log.i("TimerViewModl", "setTimerTwo()")
+    fun setTimerTwo(millisInFuture: Long) {
+        Log.i("TimerViewModl", "setTimerTwo()")
+        timerTwoTimeout = millisInFuture;
+        _timerTwoMilliseconds.value = millisInFuture
         timerTwo = object : CountDownTimer(millisInFuture,
             ONE_SECOND
         ) {
 
             override fun onFinish() {
-                _timerTwoSeconds.value = DONE
+                _timerTwoMilliseconds.value = DONE
                 onTimerTwoFinished()
-                setTimerOne(timerOneTimeout)
-                timerOne.start()
-
             }
 
             override fun onTick(millisUntilFinished: Long) {
                 Log.i("TimerTwo", "onTick")
-                _timerTwoSeconds.value = (millisUntilFinished / ONE_SECOND)
+                _timerTwoMilliseconds.value = millisUntilFinished
             }
-
         }
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        Log.i(TAG, "onCleared")
+    }
+
     fun onStart() {
-        Log.i("TimerViewModl", "onStart()")
+        Log.i("TimerViewModel", "onStart()")
         setTimerOne(timerOneTimeout)
         timerOne.start()
         _timerRunning.value = true
@@ -105,14 +106,18 @@ class TimerViewModel: ViewModel() {
         timerOne.cancel()
         timerTwo.cancel()
         _timerRunning.value = false
+        setTimerOne(timerOneTimeout)
+        setTimerTwo(timerTwoTimeout)
     }
 
     private fun onTimerOneFinished() {
+        _timerOneMilliseconds.value = timerOneTimeout
         setTimerTwo(timerOneTimeout)
-//        timerTwo.start()
+        timerTwo.start()
     }
     private fun onTimerTwoFinished() {
-
+        _timerTwoMilliseconds.value = timerTwoTimeout
         setTimerOne(timerOneTimeout)
+        timerOne.start()
     }
 }
