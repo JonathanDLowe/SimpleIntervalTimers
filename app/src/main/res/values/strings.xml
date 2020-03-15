@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Simple Interval Timers</string>
+    <string name="label_stop">Stop</string>
+    <string name="label_start">Start</string>
+</resources>
