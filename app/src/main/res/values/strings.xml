@@ -2,4 +2,5 @@
     <string name="app_name">Simple Interval Timers</string>
     <string name="label_stop">Stop</string>
     <string name="label_start">Start</string>
+    <string name="label_seconds_input_range_hint">Enter 5-60</string>
 </resources>

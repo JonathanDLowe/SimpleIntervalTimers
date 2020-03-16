@@ -1,25 +1,44 @@
 package com.jdlowe.simpleintervaltimers.timers
 
+import android.app.Application
+import android.content.Context
+import android.content.SharedPreferences
+import android.nfc.Tag
 import android.os.CountDownTimer
 import android.text.format.DateUtils
+import android.util.AndroidException
 import android.util.Log
 import android.view.View
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
+import android.view.animation.Transformation
+import androidx.core.content.edit
+import androidx.lifecycle.*
 
-class TimerViewModel: ViewModel() {
+class TimerViewModel(application: Application): AndroidViewModel(application) {
     companion object {
         val TAG = "TimerViewModel"
+        val SHARED_PREFERENCES = "TIMER_VIEW_MODEL_PREFS"
+        val KEY_TIMER_ONE_TIMEOUT = "KEY_TIMER_ONE_TIMEOUT"
+        val KEY_TIMER_TWO_TIMEOUT = "KEY_TIMER_TWO_TIMEOUT"
         val ONE_SECOND = 1000L
         val DONE = 0L
+        val DEFAULT_TIMER_VALUE = 10000L
+        val TIMER_LOWER_BOUND = 5L
+        val TIMER_UPPER_BOUND = 60L
     }
 
-    private var timerOneTimeout = 10000L //TODO
-    private var timerTwoTimeout = 10000L
+    private var timerOneTimeout: Long
+    private var timerTwoTimeout: Long
     lateinit var timerOne: CountDownTimer
     lateinit var timerTwo: CountDownTimer
+    var sharedPreferences: SharedPreferences
+
+
+    init {
+        sharedPreferences = application.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        timerOneTimeout = sharedPreferences.getLong(KEY_TIMER_ONE_TIMEOUT, DEFAULT_TIMER_VALUE)
+        timerTwoTimeout = sharedPreferences.getLong(KEY_TIMER_TWO_TIMEOUT, DEFAULT_TIMER_VALUE)
+
+    }
 
     private val _timerOneMilliseconds = MutableLiveData(timerOneTimeout)
     val timerOneMilliseconds: LiveData<Long>
@@ -46,6 +65,7 @@ class TimerViewModel: ViewModel() {
         if (running == true) View.VISIBLE
         else View.INVISIBLE
     }
+
 
     init {
         setTimerOne(timerOneTimeout)
@@ -119,5 +139,91 @@ class TimerViewModel: ViewModel() {
         _timerTwoMilliseconds.value = timerTwoTimeout
         setTimerOne(timerOneTimeout)
         timerOne.start()
+    }
+
+    private val _timerOneEditingVisible = MutableLiveData(false)
+    val timerOneEditingVisibility = Transformations.map(_timerOneEditingVisible) { isVisible ->
+        if(isVisible) View.VISIBLE
+        else View.INVISIBLE
+
+    }
+    val timerOneVisibility = Transformations.map(_timerOneEditingVisible) {isVisible ->
+        if(isVisible) View.INVISIBLE
+        else View.VISIBLE
+
+    }
+    private val _timerTwoEditingVisible = MutableLiveData(false)
+    val timerTwoEditingVisibility = Transformations.map(_timerTwoEditingVisible) { isVisible ->
+        if(isVisible) View.VISIBLE
+        else View.INVISIBLE
+    }
+
+    val timerTwoVisibility = Transformations.map(_timerTwoEditingVisible) {isVisible ->
+        if(isVisible) View.INVISIBLE
+        else View.VISIBLE
+    }
+
+    fun onTimerOneClicked() {
+        _timerOneEditingVisible.value = true
+
+    }
+
+    fun onTimerTwoClicked() {
+        _timerTwoEditingVisible.value = true
+
+    }
+
+    fun onTimerOneEditingDone(input: String) {
+        Log.i(TAG, input)
+        var parsedInput = input.toLongOrNull() ?: TIMER_LOWER_BOUND
+        parsedInput = ensureNumberInRange(TIMER_LOWER_BOUND, TIMER_UPPER_BOUND, parsedInput)
+        parsedInput *= ONE_SECOND
+        setTimerOne(parsedInput)
+        _timerOneEditingVisible.value = false
+        sharedPreferences.edit {
+            putLong(KEY_TIMER_ONE_TIMEOUT, parsedInput)
+            commit()
+        }
+        timerOneTimeout = parsedInput
+
+    }
+
+    fun onTimerTwoEditingDone(input: String) {
+        Log.i(TAG, input)
+        var parsedInput = input.toLongOrNull() ?: TIMER_LOWER_BOUND
+        parsedInput = ensureNumberInRange(TIMER_LOWER_BOUND, TIMER_UPPER_BOUND, parsedInput)
+        parsedInput *= ONE_SECOND
+        setTimerTwo(parsedInput)
+        _timerTwoEditingVisible.value = false
+        sharedPreferences.edit {
+            putLong(KEY_TIMER_TWO_TIMEOUT, parsedInput)
+            commit()
+        }
+        timerTwoTimeout = parsedInput
+
+    }
+
+    private fun ensureNumberInRange(lowerBound: Long, upperBound: Long, value: Long) : Long {
+        var num = value
+        num = Math.max(num, lowerBound)
+        num = Math.min(num, upperBound)
+        return num
+    }
+
+//    var timerOneInput = (timerOneTimeout / ONE_SECOND).toString()
+//    var timerTwoInput = (timerTwoTimeout / ONE_SECOND).toString()
+    var timerOneInput = timerOneSecondsString.value
+    var timerTwoInput = timerTwoSecondsString.value
+
+
+}
+
+class TimerViewModelFactory(private val application: Application): ViewModelProvider.Factory {
+    @Suppress("unchecked_cast")
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        if ( modelClass.isAssignableFrom(TimerViewModel::class.java)) {
+            return TimerViewModel(application) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
