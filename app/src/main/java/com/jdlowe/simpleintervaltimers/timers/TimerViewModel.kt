@@ -3,13 +3,10 @@ package com.jdlowe.simpleintervaltimers.timers
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import android.nfc.Tag
 import android.os.CountDownTimer
 import android.text.format.DateUtils
-import android.util.AndroidException
 import android.util.Log
 import android.view.View
-import android.view.animation.Transformation
 import androidx.core.content.edit
 import androidx.lifecycle.*
 
@@ -185,6 +182,7 @@ class TimerViewModel(application: Application): AndroidViewModel(application) {
             commit()
         }
         timerOneTimeout = parsedInput
+        _hideSoftInput.value = true
 
     }
 
@@ -200,7 +198,7 @@ class TimerViewModel(application: Application): AndroidViewModel(application) {
             commit()
         }
         timerTwoTimeout = parsedInput
-
+        _hideSoftInput.value = true
     }
 
     private fun ensureNumberInRange(lowerBound: Long, upperBound: Long, value: Long) : Long {
@@ -215,7 +213,13 @@ class TimerViewModel(application: Application): AndroidViewModel(application) {
     var timerOneInput = timerOneSecondsString.value
     var timerTwoInput = timerTwoSecondsString.value
 
+    private val _hideSoftInput = MutableLiveData(false)
+    val hideSoftInput: LiveData<Boolean>
+        get() = _hideSoftInput
 
+    fun doneHidingSoftInput() {
+        _hideSoftInput.value = false
+    }
 }
 
 class TimerViewModelFactory(private val application: Application): ViewModelProvider.Factory {
