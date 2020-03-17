@@ -132,7 +132,7 @@ class TimerViewModel(application: Application): AndroidViewModel(application) {
 
     private fun onTimerOneFinished() {
         _timerOneMilliseconds.value = timerOneTimeout
-        setTimerTwo(timerOneTimeout)
+        setTimerTwo(timerTwoTimeout)
         timerTwo.start()
     }
     private fun onTimerTwoFinished() {
