@@ -4,12 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="android.view.View"/>
-        <import type="android.widget.EditText"/>
-    <variable
-        name="timerViewModel"
-        type="com.jdlowe.simpleintervaltimers.timers.TimerViewModel"
-        />
+
+        <import type="android.view.View" />
+
+        <import type="android.widget.EditText" />
+
+        <variable
+            name="timerViewModel"
+            type="com.jdlowe.simpleintervaltimers.timers.TimerViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,9 +23,10 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
-            android:text="@{timerViewModel.timerOneSecondsString}"
             android:onClick="@{() -> timerViewModel.onTimerOneClicked()}"
+            android:text="@{timerViewModel.timerOneSecondsString}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+            android:textColor="@color/colorPrimary"
             android:visibility="@{timerViewModel.timerOneVisibility}"
             app:layout_constraintBottom_toTopOf="@+id/textView2"
             app:layout_constraintEnd_toEndOf="parent"
@@ -36,9 +39,10 @@
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
-            android:text="@{timerViewModel.timerTwoSecondsString}"
             android:onClick="@{() -> timerViewModel.onTimerTwoClicked()}"
+            android:text="@{timerViewModel.timerTwoSecondsString}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+            android:textColor="@color/colorPrimary"
             android:visibility="@{timerViewModel.timerTwoVisibility}"
             app:layout_constraintBottom_toTopOf="@+id/button_start"
             app:layout_constraintEnd_toEndOf="parent"
@@ -50,8 +54,10 @@
             android:id="@+id/button_start"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/label_start"
+            android:backgroundTint="@color/colorPrimary"
             android:onClick="@{() -> timerViewModel.onStart()}"
+            android:text="@string/label_start"
+            android:textColor="#FFFFFF"
             android:visibility="@{timerViewModel.startButtonVisible}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -62,9 +68,11 @@
             android:id="@+id/button_reset"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/label_stop"
-            android:visibility="@{timerViewModel.resetButtonVisible}"
+            android:backgroundTint="@color/colorPrimary"
             android:onClick="@{() -> timerViewModel.onReset()}"
+            android:text="@string/label_stop"
+            android:textColor="#FFFFFF"
+            android:visibility="@{timerViewModel.resetButtonVisible}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -74,8 +82,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="number"
             android:hint="@string/label_seconds_input_range_hint"
+            android:inputType="number"
             android:text="@={timerViewModel.timerOneInput}"
             android:visibility="@{timerViewModel.timerOneEditingVisibility}"
             app:layout_constraintBottom_toBottomOf="@+id/textView"
@@ -88,8 +96,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="number"
             android:hint="@string/label_seconds_input_range_hint"
+            android:inputType="number"
             android:text="@={timerViewModel.timerTwoInput}"
             android:visibility="@{timerViewModel.timerTwoEditingVisibility}"
             app:layout_constraintBottom_toBottomOf="@+id/textView2"
@@ -103,12 +111,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:backgroundTint="#342BA57E"
-            android:visibility="@{timerViewModel.timerOneEditingVisibility}"
             android:onClick="@{() -> timerViewModel.onTimerOneEditingDone(timerViewModel.timerOneInput)}"
+            android:visibility="@{timerViewModel.timerOneEditingVisibility}"
             app:layout_constraintBottom_toBottomOf="@+id/timerOneInput"
             app:layout_constraintStart_toEndOf="@+id/textView"
             app:layout_constraintTop_toTopOf="@+id/timerOneInput"
-            app:srcCompat="@drawable/ic_done_black_24dp"/>
+            app:srcCompat="@drawable/ic_done_black_24dp" />
 
         <ImageButton
             android:id="@+id/timerTwoTimeEditDone"
@@ -116,15 +124,38 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:backgroundTint="#342BA57E"
-            android:visibility="@{timerViewModel.timerTwoEditingVisibility}"
             android:onClick="@{() -> timerViewModel.onTimerTwoEditingDone(timerViewModel.timerTwoInput)}"
+            android:visibility="@{timerViewModel.timerTwoEditingVisibility}"
             app:layout_constraintBottom_toBottomOf="@+id/timerTwoInput"
             app:layout_constraintStart_toEndOf="@+id/textView2"
             app:layout_constraintTop_toTopOf="@+id/timerTwoInput"
-            app:srcCompat="@drawable/ic_done_black_24dp"
-             />
+            app:srcCompat="@drawable/ic_done_black_24dp" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/label_rest"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintBottom_toTopOf="@+id/textView"
+            app:layout_constraintEnd_toEndOf="@+id/textView"
+            app:layout_constraintStart_toStartOf="@+id/textView" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/label_active"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintBottom_toTopOf="@+id/textView2"
+            app:layout_constraintEnd_toEndOf="@+id/textView2"
+            app:layout_constraintStart_toStartOf="@+id/textView2" />
         <!--            android:onClick="@{() -> timerViewModel.onTimerOneEditingDone(timerOneInput.editableText.toString())}"-->
-<!--        android:onClick="@{() -> timerViewModel.onTimerTwoEditingDone(timerTwoInput.editableText.toString())}"-->
+        <!--        android:onClick="@{() -> timerViewModel.onTimerTwoEditingDone(timerTwoInput.editableText.toString())}"-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
