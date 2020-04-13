@@ -19,8 +19,8 @@ class TimerViewModel(application: Application): AndroidViewModel(application) {
         val ONE_SECOND = 1000L
         val DONE = 0L
         val DEFAULT_TIMER_VALUE = 10000L
-        val TIMER_LOWER_BOUND = 5L
-        val TIMER_UPPER_BOUND = 60L
+        val TIMER_LOWER_BOUND = 1L
+        val TIMER_UPPER_BOUND = 60L * 60
     }
 
     private var timerOneTimeout: Long
@@ -161,18 +161,21 @@ class TimerViewModel(application: Application): AndroidViewModel(application) {
     }
 
     fun onTimerOneClicked() {
+        onReset()
         _timerOneEditingVisible.value = true
 
     }
 
     fun onTimerTwoClicked() {
+        onReset()
         _timerTwoEditingVisible.value = true
 
     }
 
-    fun onTimerOneEditingDone(input: String) {
-        Log.i(TAG, input)
-        var parsedInput = input.toLongOrNull() ?: TIMER_LOWER_BOUND
+    fun onTimerOneEditingDone(input: String?) {
+        Log.i(TAG, if (input.isNullOrBlank()) "" else input)
+        onReset()
+        var parsedInput = input?.toLongOrNull() ?: TIMER_LOWER_BOUND
         parsedInput = ensureNumberInRange(TIMER_LOWER_BOUND, TIMER_UPPER_BOUND, parsedInput)
         parsedInput *= ONE_SECOND
         setTimerOne(parsedInput)
@@ -186,9 +189,10 @@ class TimerViewModel(application: Application): AndroidViewModel(application) {
 
     }
 
-    fun onTimerTwoEditingDone(input: String) {
-        Log.i(TAG, input)
-        var parsedInput = input.toLongOrNull() ?: TIMER_LOWER_BOUND
+    fun onTimerTwoEditingDone(input: String?) {
+        Log.i(TAG, if (input.isNullOrBlank()) "" else input)
+        var parsedInput = input?.toLongOrNull() ?: TIMER_LOWER_BOUND
+        onReset()
         parsedInput = ensureNumberInRange(TIMER_LOWER_BOUND, TIMER_UPPER_BOUND, parsedInput)
         parsedInput *= ONE_SECOND
         setTimerTwo(parsedInput)
