@@ -109,12 +109,11 @@
             android:id="@+id/timerOneTimeEditDone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:backgroundTint="#342BA57E"
             android:onClick="@{() -> timerViewModel.onTimerOneEditingDone(timerViewModel.timerOneInput)}"
             android:visibility="@{timerViewModel.timerOneEditingVisibility}"
             app:layout_constraintBottom_toBottomOf="@+id/timerOneInput"
-            app:layout_constraintStart_toEndOf="@+id/textView"
+            app:layout_constraintStart_toEndOf="@+id/timerOneInput"
             app:layout_constraintTop_toTopOf="@+id/timerOneInput"
             app:srcCompat="@drawable/ic_done_black_24dp" />
 
@@ -122,12 +121,11 @@
             android:id="@+id/timerTwoTimeEditDone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:backgroundTint="#342BA57E"
             android:onClick="@{() -> timerViewModel.onTimerTwoEditingDone(timerViewModel.timerTwoInput)}"
             android:visibility="@{timerViewModel.timerTwoEditingVisibility}"
             app:layout_constraintBottom_toBottomOf="@+id/timerTwoInput"
-            app:layout_constraintStart_toEndOf="@+id/textView2"
+            app:layout_constraintStart_toEndOf="@+id/timerTwoInput"
             app:layout_constraintTop_toTopOf="@+id/timerTwoInput"
             app:srcCompat="@drawable/ic_done_black_24dp" />
 
