@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Simple Interval Timer</string>
+    <string name="app_name">Simple Intervals</string>
     <string name="label_stop">Stop</string>
     <string name="label_start">Start</string>
     <string name="label_seconds_input_range_hint">Enter timeout in seconds</string>
